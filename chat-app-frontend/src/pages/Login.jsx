@@ -18,7 +18,7 @@ const Login = () => {
                 Log in
               </Button>
               <Alert variant="danger">
-                <p>An error has occurred!</p>
+                <p>An error has occurred! ༼ つ⇧ ◕_◕ ༽つ⇧</p>
               </Alert>
             </Stack>
           </Col>
