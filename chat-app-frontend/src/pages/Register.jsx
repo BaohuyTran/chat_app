@@ -3,10 +3,10 @@ import { Alert, Button, Form, Row, Col, Stack } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
 
 const Register = () => {
-  const { registerInfo, updateRegisterInfo } = useContext(AuthContext);
+  const authContext = useContext(AuthContext); //{ registerInfo, updateRegisterInfo, registerUser, registerError }
   return (
     <>
-      <Form>
+      <Form onSubmit={authContext.registerUser}>
         <Row style={{
           height: "100vh",
           justifyContent: "center",
@@ -18,32 +18,33 @@ const Register = () => {
               <Form.Control
                 type="text"
                 placeholder="Name"
-                onChange={(e) => updateRegisterInfo({
-                  ...registerInfo,
+                onChange={(e) => authContext.updateRegisterInfo({
+                  ...authContext.registerInfo,
                   name: e.target.value
                 })}
               />
               <Form.Control
                 type="text"
                 placeholder="Email"
-                onChange={(e) => updateRegisterInfo({
-                  ...registerInfo,
+                onChange={(e) => authContext.updateRegisterInfo({
+                  ...authContext.registerInfo,
                   email: e.target.value
                 })}
               />
               <Form.Control
                 type="text"
                 placeholder="Password"
-                onChange={(e) => updateRegisterInfo({
-                  ...registerInfo,
+                onChange={(e) => authContext.updateRegisterInfo({
+                  ...authContext.registerInfo,
                   password: e.target.value
                 })}
               />
               <Button variant="primary" type="submit">
-                Sign up
+                {authContext.isRegisterLoading ? "Creating your account" : "Sign up"}
               </Button>
+
               <Alert variant="danger">
-                <p>An error has occurred! ༼ つ⇧ ◕_◕ ༽つ⇧</p>
+                <p> ༼ つ⇧ ◕_◕ ༽つ⇧ --- {authContext.registerError?.message || "Hello!"}</p>
               </Alert>
             </Stack>
           </Col>
