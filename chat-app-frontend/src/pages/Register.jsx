@@ -3,7 +3,7 @@ import { Alert, Button, Form, Row, Col, Stack } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
 
 const Register = () => {
-  const authContext = useContext(AuthContext); //{ registerInfo, updateRegisterInfo, registerUser, registerError }
+  const authContext = useContext(AuthContext);
   return (
     <>
       <Form onSubmit={authContext.registerUser}>
