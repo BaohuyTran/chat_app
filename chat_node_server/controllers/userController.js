@@ -39,10 +39,14 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
+  const isValidPassword = false;
 
   try {
     let user = await userModel.findOne({ email });
-    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (user) {
+      isValidPassword = await bcrypt.compare(password, user.password);
+    }
 
     if (!user || !isValidPassword) {
       return res.status(400).json("Email or password incorrect");

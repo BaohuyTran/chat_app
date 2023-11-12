@@ -40,11 +40,11 @@ const Register = () => {
                 })}
               />
               <Button variant="primary" type="submit">
-                {authContext.isRegisterLoading ? "Creating your account" : "Sign up"}
+                {authContext.isLoading ? "Wait a second!!" : "Sign up"}
               </Button>
 
               <Alert variant="danger">
-                <p> ༼ つ⇧ ◕_◕ ༽つ⇧ --- {authContext.registerError?.message || "Hello!"}</p>
+                <p> ༼ つ⇧ ◕_◕ ༽つ⇧ --- {authContext.actionError?.message || "Hello!"}</p>
               </Alert>
             </Stack>
           </Col>
