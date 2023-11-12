@@ -1,9 +1,12 @@
+import { useContext } from "react";
 import { Alert, Button, Form, Row, Col, Stack } from "react-bootstrap";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
+  const authContext = useContext(AuthContext);
   return (
     <>
-      <Form>
+      <Form onSubmit={authContext.loginUser}>
         <Row style={{
           height: "100vh",
           justifyContent: "center",
@@ -12,13 +15,27 @@ const Login = () => {
           <Col xs={6}>
             <Stack gap={3}>
               <h2>Welcome back!</h2>
-              <Form.Control type="text" placeholder="Email" />
-              <Form.Control type="text" placeholder="Password" />
+              <Form.Control
+                type="text"
+                placeholder="Email"
+                onChange={(e) => authContext.updateLoginInfo({
+                  ...authContext.loginInfo,
+                  email: e.target.value
+                })}
+              />
+              <Form.Control
+                type="text"
+                placeholder="Password"
+                onChange={(e) => authContext.updateLoginInfo({
+                  ...authContext.loginInfo,
+                  password: e.target.value
+                })}
+              />
               <Button variant="primary" type="submit">
-                Log in
+                {authContext.isLoading ? "Wait a second!!" : "Log in"}
               </Button>
               <Alert variant="danger">
-                <p>An error has occurred! ༼ つ⇧ ◕_◕ ༽つ⇧</p>
+                <p> ༼ つ⇧ ◕_◕ ༽つ⇧ --- {authContext.actionError?.message || "Hello!"}</p>
               </Alert>
             </Stack>
           </Col>
