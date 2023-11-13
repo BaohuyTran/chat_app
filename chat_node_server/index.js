@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const userRoute = require('./routes/userRoute')
+const userRoute = require('./routes/userRoute');
+const chatRoute = require('./routes/chatRoute');
 
 require('dotenv').config();
 
@@ -12,6 +13,7 @@ const uri = process.env.ATLAS_URI;
 app.use(express.json());
 app.use(cors());
 app.use("/api/v1/users", userRoute);
+app.use("/api/v1/chats", chatRoute);
 
 app.get('/', (req, res) => {
   res.send('Welcome to the chat application that is not named yet...');
