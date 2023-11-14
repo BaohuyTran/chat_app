@@ -36,7 +36,6 @@ export const AuthContextProvider = ({ children }) => {
     setActionError(null);
 
     const response = await postRequest(`${baseUrl}/users/register`, JSON.stringify(registerInfo));
-    console.log(JSON.stringify(registerInfo));
 
     setIsLoading(false);
 
@@ -60,7 +59,6 @@ export const AuthContextProvider = ({ children }) => {
     setActionError(null);
 
     const response = await postRequest(`${baseUrl}/users/login`, JSON.stringify(loginInfo));
-    console.log(JSON.stringify(loginInfo));
 
     setIsLoading(false);
 

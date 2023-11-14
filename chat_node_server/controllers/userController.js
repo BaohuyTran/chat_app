@@ -39,7 +39,7 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
-  const isValidPassword = false;
+  let isValidPassword = false;
 
   try {
     let user = await userModel.findOne({ email });

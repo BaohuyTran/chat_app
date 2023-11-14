@@ -19,3 +19,17 @@ export const postRequest = async (url, body) => {
 
   return data;
 }
+
+export const getRequest = async (url, body) => {
+  const response = await fetch(url);
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    let message = data?.message ? data.message : data;
+
+    return { error: true, message };
+  }
+
+  return data;
+}
