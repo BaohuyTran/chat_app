@@ -6,20 +6,20 @@ export const ChatContext = createContext();
 export const ChatContextProvider = ({ children, user }) => {
   const [userChats, setUserChats] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [actionError, setActionError] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const getUserChats = async () => {
       if (user?._id) {
         setIsLoading(true);
-        setActionError(null);
+        setError(null);
 
         const response = await getRequest(`${baseUrl}/chats/${user?._id}`);
 
         setIsLoading(false);
 
         if (response.error) {
-          return setActionError(response);
+          return setError(response);
         }
 
         setUserChats(response);
@@ -34,7 +34,7 @@ export const ChatContextProvider = ({ children, user }) => {
       value={{
         userChats,
         isLoading,
-        actionError
+        error
       }}
     >
       {children}

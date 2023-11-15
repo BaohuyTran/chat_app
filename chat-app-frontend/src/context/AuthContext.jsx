@@ -7,7 +7,7 @@ export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [actionError, setActionError] = useState(null);
+  const [error, setError] = useState(null);
   const [registerInfo, setRegisterInfo] = useState({
     name: "",
     email: "",
@@ -33,14 +33,14 @@ export const AuthContextProvider = ({ children }) => {
     event.preventDefault();
 
     setIsLoading(true);
-    setActionError(null);
+    setError(null);
 
     const response = await postRequest(`${baseUrl}/users/register`, JSON.stringify(registerInfo));
 
     setIsLoading(false);
 
     if (response.error) {
-      return setActionError(response);
+      return setError(response);
     }
 
     localStorage.setItem("User", JSON.stringify(response)); // to remember the user
@@ -56,14 +56,14 @@ export const AuthContextProvider = ({ children }) => {
     event.preventDefault();
 
     setIsLoading(true);
-    setActionError(null);
+    setError(null);
 
     const response = await postRequest(`${baseUrl}/users/login`, JSON.stringify(loginInfo));
 
     setIsLoading(false);
 
     if (response.error) {
-      return setActionError(response);
+      return setError(response);
     }
 
     localStorage.setItem("User", JSON.stringify(response)); // to remember the user
@@ -80,7 +80,7 @@ export const AuthContextProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
-        actionError,
+        error,
         isLoading,
         registerInfo,
         updateRegisterInfo,

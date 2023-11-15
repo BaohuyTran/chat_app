@@ -35,7 +35,7 @@ const Login = () => {
                 {authContext.isLoading ? "Wait a second!!" : "Log in"}
               </Button>
               <Alert variant="danger">
-                <p> ༼ つ⇧ ◕_◕ ༽つ⇧ --- {authContext.actionError?.message || "Hello!"}</p>
+                <p> ༼ つ⇧ ◕_◕ ༽つ⇧ --- {authContext.error?.message || "Hello!"}</p>
               </Alert>
             </Stack>
           </Col>

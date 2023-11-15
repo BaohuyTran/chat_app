@@ -44,7 +44,7 @@ const Register = () => {
               </Button>
 
               <Alert variant="danger">
-                <p> ༼ つ⇧ ◕_◕ ༽つ⇧ --- {authContext.actionError?.message || "Hello!"}</p>
+                <p> ༼ つ⇧ ◕_◕ ༽つ⇧ --- {authContext.error?.message || "Hello!"}</p>
               </Alert>
             </Stack>
           </Col>
