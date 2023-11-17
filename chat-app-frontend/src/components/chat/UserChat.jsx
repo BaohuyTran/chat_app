@@ -5,7 +5,6 @@ import { useFetchReceiver } from "../../hooks/useFetchReceiver";
 const UserChat = ({ chat, user }) => {
   const { receiver } = useFetchReceiver(chat, user);
 
-  console.log(receiver);
   return (
     <Stack
       direction="horizontal"
