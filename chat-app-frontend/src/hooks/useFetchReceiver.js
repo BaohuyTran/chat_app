@@ -21,7 +21,7 @@ export const useFetchReceiver = (chat, user) => {
     };
 
     getUser();
-  }, []);
+  }, [receiverId]);
 
   return { receiver, error };
 };

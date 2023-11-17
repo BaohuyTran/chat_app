@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/chats", chatRoute);
-app.use("/api/v1/message", messageRoute);
+app.use("/api/v1/messages", messageRoute);
 
 app.get('/', (req, res) => {
   res.send('Welcome to the chat application that is not named yet...');
