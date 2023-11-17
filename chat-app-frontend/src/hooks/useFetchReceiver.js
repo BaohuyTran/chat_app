@@ -4,8 +4,11 @@ import { baseUrl, getRequest } from "../utils/services";
 export const useFetchReceiver = (chat, user) => {
   const [receiver, setReceiver] = useState(null);
   const [error, setError] = useState(null);
+  const [receiverId, setReceiverId] = useState(null);
 
-  const receiverId = chat?.members.find((id) => id !== user?._id);
+  useEffect(() => {
+    setReceiverId(chat?.members.find((id) => id !== user?._id));
+  }, [chat, user]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -23,5 +26,5 @@ export const useFetchReceiver = (chat, user) => {
     getUser();
   }, [receiverId]);
 
-  return { receiver, error };
+  return { receiver, setReceiver };
 };
