@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ChatContext } from "../context/ChatContext";
 import { AuthContext } from "../context/AuthContext";
 import { Container, Stack } from "react-bootstrap";
@@ -9,6 +9,12 @@ import ChatBox from "../components/chat/ChatBox";
 const Chat = () => {
   const authContext = useContext(AuthContext);
   const chatContext = useContext(ChatContext);
+
+  // clear the chatbox when log out
+  useEffect(() => {
+    chatContext.setCurrentChat(null);
+    chatContext.setMessages(null);
+  }, [authContext.user]);
 
   return (
     <Container>
