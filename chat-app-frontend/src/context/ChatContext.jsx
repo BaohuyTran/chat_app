@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useCallback } from "react";
 import { baseUrl, getRequest, postRequest } from "../utils/services";
+import { io } from "socket.io-client";
 
 export const ChatContext = createContext();
 
@@ -18,6 +19,55 @@ export const ChatContextProvider = ({ children, user }) => {
   const [newMessage, setNewMessage] = useState(null);
   const [newMessageError, setNewMessageError] = useState(null);
 
+  const [socket, setSocket] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+
+  // Initial socket
+  useEffect(() => {
+    const newSocket = io("http://localhost:5000");
+    setSocket(newSocket);
+
+    return (() => { newSocket.disconnect() });
+  }, [user]);
+
+  // add online user
+  useEffect(() => {
+    if (socket === null) return;
+
+    socket.emit("addNewUser", user?._id);
+    socket.on("getOnlineUsers", (res) => {
+      setOnlineUsers(res);
+    })
+
+    return (() => {
+      socket.off("getOnlineUsers");
+    });
+  }, [socket]);
+
+  // send message
+  useEffect(() => {
+    if (socket === null) return;
+
+    const receiverId = currentChat?.members.find((id) => id !== user?._id);
+    socket.emit("sendMessage", { ...newMessage, receiverId });
+  }, [newMessage]);
+
+  // receive message
+  useEffect(() => {
+    if (socket === null) return;
+
+    socket.on("getMessage", (res) => {
+      if (currentChat?._id !== res.chatId) return;
+
+      setMessages((messages) => [...messages, res]);
+    })
+
+    return (() => {
+      socket.off("getMessage");
+    })
+  }, [socket, currentChat]);
+
+  // Get potential users
   useEffect(() => {
     const getUsers = async () => {
       const response = await getRequest(`${baseUrl}/users`);
@@ -43,6 +93,7 @@ export const ChatContextProvider = ({ children, user }) => {
     getUsers();
   }, [userChats])
 
+  // get all chats of the user
   useEffect(() => {
     const getUserChats = async () => {
       if (user?._id) {
@@ -64,6 +115,26 @@ export const ChatContextProvider = ({ children, user }) => {
     getUserChats();
   }, [user]);
 
+  // create a new conservation
+  const createChat = useCallback(async (firstId, secondId) => {
+    const response = await postRequest(`
+      ${baseUrl}/chats`,
+      JSON.stringify({ firstId, secondId })
+    );
+
+    if (response.error) {
+      return console.log("Error creating chat", response);
+    }
+
+    setUserChats((chats) => [...chats, response]);
+  }, []);
+
+  // get the conservation
+  const updateCurrentChat = useCallback((chat) => {
+    setCurrentChat(chat);
+  }, [])
+
+  // get all messages from the current chat
   useEffect(() => {
     const getMessages = async () => {
       setIsMessagesLoading(true);
@@ -83,23 +154,7 @@ export const ChatContextProvider = ({ children, user }) => {
     getMessages();
   }, [currentChat]);
 
-  const createChat = useCallback(async (firstId, secondId) => {
-    const response = await postRequest(`
-      ${baseUrl}/chats`,
-      JSON.stringify({ firstId, secondId })
-    );
-
-    if (response.error) {
-      return console.log("Error creating chat", response);
-    }
-
-    setUserChats((chats) => [...chats, response]);
-  }, []);
-
-  const updateCurrentChat = useCallback((chat) => {
-    setCurrentChat(chat);
-  }, [])
-
+  // send message
   const sendMessage = useCallback(async (textMessage, sender, currentChatId, setTextMessage) => {
     if (!textMessage) return;
 
@@ -134,6 +189,7 @@ export const ChatContextProvider = ({ children, user }) => {
         setMessages,
         isMessagesLoading,
         sendMessage,
+        onlineUsers
       }}
     >
       {children}
