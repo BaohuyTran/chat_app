@@ -21,6 +21,8 @@ export const ChatContextProvider = ({ children, user }) => {
 
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
 
   // Initial socket
   useEffect(() => {
@@ -52,7 +54,7 @@ export const ChatContextProvider = ({ children, user }) => {
     socket.emit("sendMessage", { ...newMessage, receiverId });
   }, [newMessage]);
 
-  // receive message
+  // receive message and notifications
   useEffect(() => {
     if (socket === null) return;
 
@@ -60,11 +62,22 @@ export const ChatContextProvider = ({ children, user }) => {
       if (currentChat?._id !== res.chatId) return;
 
       setMessages((messages) => [...messages, res]);
-    })
+    });
+
+    socket.on("getNotification", (res) => {
+      const isChatOpen = currentChat?.members.some((id) => id === res.senderId);
+
+      if (isChatOpen) {
+        setNotifications((notifis) => [{ ...res, isRead: true }, ...notifis]);
+      } else {
+        setNotifications((notifis) => [res, ...notifis]);
+      }
+    });
 
     return (() => {
       socket.off("getMessage");
-    })
+      socket.off("getNotification");
+    });
   }, [socket, currentChat]);
 
   // Get potential users
@@ -87,7 +100,9 @@ export const ChatContextProvider = ({ children, user }) => {
 
         return !isChatCreated;
       });
+
       setPotentialChats(pChats);
+      setAllUsers(response);
     }
 
     getUsers();
@@ -113,7 +128,7 @@ export const ChatContextProvider = ({ children, user }) => {
     }
 
     getUserChats();
-  }, [user]);
+  }, [user, notifications]);
 
   // create a new conservation
   const createChat = useCallback(async (firstId, secondId) => {
@@ -173,6 +188,65 @@ export const ChatContextProvider = ({ children, user }) => {
     setTextMessage("");
   }, [])
 
+  // Mark all notifications as read
+  const markAllNotificationsAsRead = useCallback((notifications) => {
+    const modifiedNotifications = notifications.map((notification) => {
+      return {
+        ...notification,
+        isRead: true
+      }
+    });
+
+    setNotifications(modifiedNotifications);
+  }, []);
+
+  // Mark one notification as read
+  const markOneNotificationAsRead = useCallback((notification, userChats, user, notifications) => {
+    // find the notification's chat
+    const targetChat = userChats.find((chat) => {
+      const chatMembers = [user._id, notification.senderId];
+      const isTargetChat = chat?.members.every((member) => {
+        return chatMembers.includes(member);
+      });
+
+      return isTargetChat;
+    });
+
+    // mark the notification as read
+    const modifiedNotifications = notifications.map((n) => {
+      if (notification.senderId === n.senderId) {
+        return { ...notification, isRead: true };
+      } else {
+        return n;
+      }
+    });
+
+    updateCurrentChat(targetChat);
+    setNotifications(modifiedNotifications);
+
+  }, []);
+
+  // Mark all notifications of this chatting user
+  const markThisUserNotificationsAsRead = useCallback((thisUserNotifications, notifications) => {
+    const modifiedNotifications = notifications.map((notification) => {
+      let result;
+
+      thisUserNotifications.forEach((n) => {
+        if (n.senderId === notification.senderId) {
+          result = { ...n, isRead: true };
+          console.log('true', result);
+        } else {
+          result = notification;
+          console.log('false', result);
+        }
+      });
+
+      return result;
+    });
+
+    setNotifications(modifiedNotifications);
+  })
+
   return (
     <ChatContext.Provider
       value={{
@@ -189,7 +263,12 @@ export const ChatContextProvider = ({ children, user }) => {
         setMessages,
         isMessagesLoading,
         sendMessage,
-        onlineUsers
+        onlineUsers,
+        notifications,
+        allUsers,
+        markAllNotificationsAsRead,
+        markOneNotificationAsRead,
+        markThisUserNotificationsAsRead
       }}
     >
       {children}
