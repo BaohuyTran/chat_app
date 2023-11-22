@@ -1,7 +1,7 @@
 import InputEmoji from "react-input-emoji";
 import { Stack } from "react-bootstrap";
 import moment from "moment";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { ChatContext } from "../../context/ChatContext";
 import { AuthContext } from "../../context/AuthContext";
 import { useFetchReceiver } from "../../hooks/useFetchReceiver";
@@ -11,6 +11,11 @@ const ChatBox = () => {
   const { currentChat, messages, isMessagesLoading, sendMessage } = useContext(ChatContext);
   const { receiver, setReceiver } = useFetchReceiver(currentChat, user);
   const [textMessage, setTextMessage] = useState("");
+  const scroll = useRef();
+
+  useEffect(() => {
+    scroll.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   if (!receiver) {
     return (
@@ -41,6 +46,7 @@ const ChatBox = () => {
               ? "message self align-self-end flex-grow-0"
               : "message align-self-start flex-grow-0"
               }`}
+            ref={scroll}
           >
             <span>{message.text}</span>
             <span className="message-footer">{moment(message.createdAt).calendar()}</span>
