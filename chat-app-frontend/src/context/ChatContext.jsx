@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useCallback } from "react";
 import { baseUrl, getRequest, postRequest } from "../utils/services";
+import { sortChatsByLastMessageService } from "../utils/sortChats";
 import { io } from "socket.io-client";
 
 export const ChatContext = createContext();
@@ -123,12 +124,25 @@ export const ChatContextProvider = ({ children, user }) => {
           return setUserChatsError(response);
         }
 
+        response.forEach(async (chat) => {
+          const res = await getRequest(`${baseUrl}/messages/${chat?._id}`);
+
+          if (res.error) {
+            return console.log("Can not get messages from chat!");
+          }
+          console.log('res', res[res.length - 1]?.createdAt);
+          chat.updatedAt = res[res.length - 1]?.createdAt;
+        });
+
+        response.sort(sortChatsByLastMessageService);
+
         setUserChats(response);
+        console.log(userChats);
       }
     }
 
     getUserChats();
-  }, [user, notifications]);
+  }, [user, notifications, newMessage]);
 
   // create a new conservation
   const createChat = useCallback(async (firstId, secondId) => {
