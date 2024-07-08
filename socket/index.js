@@ -18,6 +18,12 @@ io.on("connection", (socket) => {
     io.emit("getOnlineUsers", onlineUsers);
   });
 
+  // the server receive the data and run sendMessage
+  // it find the receive user by the id
+  // if found the user,
+  // the event getMessage and getNotification is run
+  // and the receiver will receive the message4
+
   // send message
   socket.on("sendMessage", (message) => {
     const user = onlineUsers.find((user) => user.userId === message.receiverId);

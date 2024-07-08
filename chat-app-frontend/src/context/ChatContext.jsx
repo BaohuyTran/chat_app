@@ -47,6 +47,11 @@ export const ChatContextProvider = ({ children, user }) => {
     });
   }, [socket]);
 
+  // How socket work:
+  // after user send the message, message is save in the DB
+  // setMessage(response) then the function below is run
+  // socket server trigger the event sendMessage with data is newMessage + the receiver ID
+
   // send message
   useEffect(() => {
     if (socket === null) return;
