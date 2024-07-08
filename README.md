@@ -1,7 +1,11 @@
 "# chat_app"
 
-chat app follow youtube tutorial: 
-https://youtube.com/playlist?list=PL63c_Ws9ecIRZ6njHRi3cuCkNSfzqyLBn&si=rAc6VICbGWI8L-Z_
+Tools and Techniques:
+- React(context api, bootstrap)
+- Nodejs, Expressjs
+- Socket.io
+- MongoDB
+
 
 Future plans:
 - fix bugs
